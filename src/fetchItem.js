@@ -1,33 +1,36 @@
-"use strict";
-const AWS = require("aws-sdk");
+"use strict"
+
+const AWS = require("aws-sdk")
 
 const fetchItem = async (event) => {
-  //module.exports.fetchItem = async (event) => {
+  
+  const dynamoDB = new AWS.DynamoDB.DocumentClient();
+  const {id} = event.pathParameters
+  
+  let item;
 
-    const dynamodb = new AWS.DynamoDB.DocumentClient();
+  try {
 
-    const {id} = event.pathParameters
+    const result = await dynamoDB.get({
+      TableName: "ItemTableNew",
+      Key: {id}
+    }).promise();
 
-    let item;
+    item = result.Item;
+    
+  } catch (error) {
 
-    try {
-        const result = await dynamodb.get({
-            TableName: "ItemTable",
-            Key: {id}
-        }).promise();
+    console.log(error)
+    
+  }
 
-        item = result.Item;
-
-    } catch (error) {
-        console.log(error)
-    }
-
-    return {
-        statusCode: 200,
-        body: JSON.stringify(item),
-    };
-};
+  return {
+    statusCode: 200,
+    body: JSON.stringify(item)
+  };
+  
+}
 
 module.exports = {
-    handler: fetchItem,
-};
+  handler: fetchItem
+}

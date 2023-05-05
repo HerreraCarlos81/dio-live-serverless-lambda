@@ -1,14 +1,12 @@
 "use strict";
 
-const {v4} = require("uuid");
 const AWS = require("aws-sdk")
 
 const insertItem = async (event) => {
-//module.exports.insertItem = async (event) => {
 
   const {item} = JSON.parse(event.body);
   const createdAt = new Date().toISOString();
-  const id = v4()
+  const id = AWS.util.uuid.v4();
 
   const dynamodb = new AWS.DynamoDB.DocumentClient();
 
@@ -20,7 +18,7 @@ const insertItem = async (event) => {
   }
 
   await dynamodb.put({
-    TableName: "ItemTable",
+    TableName: "ItemTableNew",
     Item: newItem
   }).promise()
 
@@ -34,5 +32,4 @@ const insertItem = async (event) => {
 module.exports = {
     handler:insertItem
 }
-
 
